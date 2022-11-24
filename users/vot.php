@@ -11,7 +11,7 @@ $nombre = $connec->prepare("SELECT name, lastname, role FROM users WHERE email =
 $nombre->execute();
 $dirigente = $nombre->fetch();
 
-// Agregar votante
+// Agregar votante 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $namev = ucfirst($_POST['namev']);
