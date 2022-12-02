@@ -4,6 +4,10 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: ../index.php');
 }
 
+if ($_SESSION['role'] != 1) {
+    header('Location: ./inicio.php');
+}
+
 $mail = ($_SESSION['usuario']);
 
 require 'nav.php';

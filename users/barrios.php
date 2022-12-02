@@ -4,6 +4,10 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: ../index.php');
 }
 
+if ($_SESSION['role'] != 1) {
+    header('Location: ./inicio.php');
+}
+
 require 'nav.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -58,9 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    
+
     <div class="card text-center card w-75" style="position:relative; margin: 10px auto">
-        <form style="position:relative; margin:auto" action="<?php htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" >
+        <form style="position:relative; margin:auto" action="<?php htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
             <br />
             <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Nombre de barrio:</h5>
 
