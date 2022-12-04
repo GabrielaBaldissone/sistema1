@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $erroresv = '';
 
     if (empty($dniv)) {
-        $dniv = rand(1, 900000);
+        $dniv = rand(1, 999999);
     }
 
     $comparardni = $connec->prepare('SELECT * FROM persons WHERE dni = :dni');
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         $resul_id_dirigente = $id_dirigente->fetch();
 
-        // Guardar la relación de la perosna y el dirigente
+        // Guardar la relación de la persona y el dirigente
         $person_user = $connec->prepare('INSERT INTO person_user (id_user, id_person) VALUES(:id_user, :id_person)');
         $person_user->execute(array(
             ':id_user' => $resul_id_dirigente[0],
@@ -114,27 +114,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <form action="<?php htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
             <br />
-            <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Votantes:</h5>
-
+            <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Formulario para agregar votante:</h5>
+            <br />
             <div class="table-responsive" style="max-width: 90%; position:relative; margin:10px auto;">
                 <table class="table">
                     <tbody>
                         <tr>
-                            <td style="font-weight:bold;"> N° </td>
-                            <td style="font-weight:bold;"> Nombre </td>
-                            <td style="font-weight:bold;"> Apellido </td>
+                            <td style="font-weight:bold;"> Nombre <label style="color:red">*</label></td>
+                            <td style="font-weight:bold;"> Apellido <label style="color:red">*</label></td>
                             <td style="font-weight:bold;"> DNI <label style="color:red">*</label></td>
                             <td style="font-weight:bold;"> Domicilio </td>
                             <td style="font-weight:bold;"> Barrio </td>
                             <td style="font-weight:bold;"> Teléfono </td>
                         </tr>
                         <tr>
-                            <td type="number" name="orden"> 1 </td>
-                            <td> <input type="text" name="namev"> </input> </td>
-                            <td> <input type="text" name="lastnamev"> </input> </td>
-                            <td> <input type="number" maxlength="8" placeholder="sin puntos" name="dniv" required> </input> </td>
-                            <td> <input type="text" name="addressv"> </input> </td>
-                            <td><select name="id_districtsv">
+                            <td> <input type="text" class="form-control" name="namev" required> </input> </td>
+                            <td> <input type="text" class="form-control" name="lastnamev" required> </input> </td>
+                            <td> <input type="number" class="form-control" min="1000000" max="99999999" placeholder="sin puntos" name="dniv" required> </input> </td>
+                            <td> <input type="text" class="form-control" name="addressv"> </input> </td>
+                            <td><select class="form-select" name="id_districtsv">
                                     <?php
 
                                     $result = $connec->prepare("SELECT * FROM districts ORDER BY name ASC");
@@ -147,18 +145,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     }
                                     ?>
                                 </select></td>
-                            <td> <input type="number" name="phonev"> </input> </td>
+                            <td> <input type="number" class="form-control" name="phonev"> </input> </td>
                         </tr>
                     </tbody>
                 </table>
                 <?php if (!empty($erroresv)) : ?>
-                <div style="margin: 10px 0; padding: 12px; border-radius: 4px 4px 4px 4px;" class="alert alert-danger alert-dismissible fade show col-md-3" role="alert">
-                    <strong><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-exclamation-lg" viewBox="0 0 16 16">
-                            <path d="M7.005 3.1a1 1 0 1 1 1.99 0l-.388 6.35a.61.61 0 0 1-1.214 0L7.005 3.1ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
-                        </svg> <?php echo $erroresv; ?></strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif ?>
+                    <div style="margin: 10px 0; padding: 12px; border-radius: 4px 4px 4px 4px;" class="alert alert-danger alert-dismissible fade show col-md-3" role="alert">
+                        <strong><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-exclamation-lg" viewBox="0 0 16 16">
+                                <path d="M7.005 3.1a1 1 0 1 1 1.99 0l-.388 6.35a.61.61 0 0 1-1.214 0L7.005 3.1ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z" />
+                            </svg> <?php echo $erroresv; ?></strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif ?>
                 <label style="position:relative; margin:10px auto; color:red">* Dato obligatorio.</label>
             </div>
             <button style="position:relative; margin:10px auto; text-align: center; display: flex;" type="submit" class="btn btn-success">Agregar votante</button>
@@ -172,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="col-8">
             <div class="mb-3">
                 <label class="form-label" style="font-weight:bold;"> Buscador: </label>
-                <input onkeyup="buscar_ahora($('#buscar').val());" style="width: 300px;" class="form-control" type="text" placeholder="Buscar" id="buscar" name="buscar">
+                <input onkeyup="buscar_ahora($('#buscar').val());" style="width: 300px;" class="form-control" type="text" placeholder="nombre, apellido o dni" id="buscar" name="buscar">
             </div>
         </div>
     </div>
@@ -193,8 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </script>
 
     <div id="datos_buscador" class="table-responsive" style="max-width: 90%; position:relative; margin:10px auto;">
-        <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Lista de votantes sin planilla:</h5>
-        <br /><br />
+        <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Lista de votantes:</h5>
+        <br />
         <table class="table" style="position:relative; margin:auto">
             <thead>
                 <tr>
@@ -231,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td> <?php echo  $i; ?> </td>
                             <td> <?php echo $row['name']  ?> </td>
                             <td> <?php echo $row['lastname'] ?> </td>
-                            <td required> <?php if (strlen($row['dni']) >= 7) : echo $row['dni'];
+                            <td> <?php if (strlen($row['dni']) > 6) : echo $row['dni'];
                                             endif ?></td>
                             <td> <?php echo $row['address'] ?> </td>
                             <td> <?php
@@ -291,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td> <?php echo  $i; ?> </td>
                             <td> <?php echo $row['name']  ?> </td>
                             <td> <?php echo $row['lastname'] ?> </td>
-                            <td required> <?php if (strlen($row['dni']) >= 7) : echo $row['dni'];
+                            <td> <?php if (strlen($row['dni']) > 6) : echo $row['dni'];
                                             endif ?></td>
                             <td> <?php echo $row['address'] ?> </td>
                             <td> <?php

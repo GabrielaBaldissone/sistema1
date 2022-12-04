@@ -26,15 +26,14 @@ if (!isset($_SESSION['usuario'])) {
 
     <form action="upvotante.php" method="post">
         <br />
-        <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Planilla de votantes:</h5>
+        <h5 style="position:relative; margin:10px auto; text-align:center; font-weight:bold;">Formulario para editar votante:</h5>
 
         <div class="table-responsive" style="max-width: 90%; position:relative; margin:10px auto;">
             <table class="table">
                 <tbody>
                     <tr>
-                        <td style="font-weight:bold;"> N° </td>
-                        <td style="font-weight:bold;"> Nombre </td>
-                        <td style="font-weight:bold;"> Apellido </td>
+                        <td style="font-weight:bold;"> Nombre <label style="color:red">*</label></td>
+                        <td style="font-weight:bold;"> Apellido <label style="color:red">*</label></td>
                         <td style="font-weight:bold;"> DNI <label style="color:red">*</label></td>
                         <td style="font-weight:bold;"> Domicilio </td>
                         <td style="font-weight:bold;"> Barrio </td>
@@ -55,13 +54,12 @@ if (!isset($_SESSION['usuario'])) {
                     foreach ($upresultado as $row) {
                     ?>
                         <tr>
-                            <td> 1 </td>
-                            <td> <input type="text" name="name" value="<?php echo $row['name'] ?>"> </input> </td>
-                            <td> <input type="text" name="lastname" value="<?php echo $row['lastname'] ?>"> </input> </td>
-                            <td required> <input type="number" name="dni" value="<?php if (strlen($row['dni']) >= 7) : echo $row['dni'];
-                                                                                    endif ?>" required> </input> </td>
-                            <td> <input type="text" name="address" value="<?php echo $row['address'] ?>"> </input> </td>
-                            <td><select name="districts">
+                            <td> <input type="text" class="form-control" name="name" value="<?php echo $row['name'] ?>" required> </input> </td>
+                            <td> <input type="text" class="form-control" name="lastname" value="<?php echo $row['lastname'] ?>" required> </input> </td>
+                            <td> <input type="number" class="form-control" name="dni" min="1000000" max="99999999" value="<?php if (strlen($row['dni']) > 6) : echo $row['dni'];
+                                                                        endif ?>" required> </input> </td>
+                            <td> <input type="text" class="form-control" name="address" value="<?php echo $row['address'] ?>"> </input> </td>
+                            <td><select class="form-select" name="districts">
                                     <?php
                                     $resul = $connec->prepare("SELECT name
                                    FROM districts D
@@ -88,7 +86,7 @@ if (!isset($_SESSION['usuario'])) {
                                     ?>
                                 </select></td>
 
-                            <td> <input type="number" name="phone" value="<?php echo $row['phone'] ?>"> </input> </td>
+                            <td> <input type="number" class="form-control" name="phone" value="<?php echo $row['phone'] ?>"> </input> </td>
                         </tr>
                     <?php
                     }
