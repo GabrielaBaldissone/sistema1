@@ -60,14 +60,20 @@
                 <br />
                 <label>Email:</label>
                 <br />
-                <input type="email" class="form-control" name="email" value="<?php if (isset($mail)) echo $mail ?>" placeholder="Ingresar email">
+                <div class="container">
+                    <div class="row">
+                        <div class="input-group">
+                            <input type="email" class="form-control" name="email" value="<?php if (isset($mail)) echo $mail ?>" placeholder="Ingresar email" required>
+                        </div>
+                    </div>
+                </div>
                 <br />
                 <label>Contraseña:</label>
                 <br />
                 <div class="container">
                     <div class="row">
                         <div class="input-group">
-                            <input name="password" ID="txtPassword" type="Password" Class="form-control">
+                            <input name="password" ID="txtPassword" type="Password" Class="form-control" required>
                             <div class="input-group-append">
                                 <button id="show_password" class="btn btn-primary" type="button" onclick="mostrarPassword()"> <span class="fa fa-eye-slash icon"></span> </button>
                             </div>

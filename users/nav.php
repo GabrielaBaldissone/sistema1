@@ -31,7 +31,7 @@ $roles = $role->fetch();
             <?php
             }
             ?>
-            <a style="background-color: #f1f1f1d2" class="btn btn-light btn-sm" href="planillas.php">PLANILLAS</a>
+            <a style="background-color: #f1f1f1d2" class="btn btn-light btn-sm disabled" href="planillas.php">PLANILLAS</a>
             <a style="background-color: #f1f1f1d2" class="btn btn-light btn-sm" href="vot.php">VOTANTES</a>
         </div>
         <a class="btn btn-outline-light" href="../cerrar_sesion.php" title="Cerrar sesión"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
