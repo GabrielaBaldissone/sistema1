@@ -57,7 +57,7 @@ if (!isset($_SESSION['usuario'])) {
                             <td> <input type="text" class="form-control" name="name" value="<?php echo $row['name'] ?>" required> </input> </td>
                             <td> <input type="text" class="form-control" name="lastname" value="<?php echo $row['lastname'] ?>" required> </input> </td>
                             <td> <input type="number" class="form-control" name="dni" min="1000000" max="99999999" value="<?php if (strlen($row['dni']) > 6) : echo $row['dni'];
-                                                                        endif ?>" required> </input> </td>
+                                                                                                                            endif ?>" required> </input> </td>
                             <td> <input type="text" class="form-control" name="address" value="<?php echo $row['address'] ?>"> </input> </td>
                             <td><select class="form-select" name="districts">
                                     <?php
@@ -71,11 +71,17 @@ if (!isset($_SESSION['usuario'])) {
 
                                     $result1 = $connec->prepare("SELECT * FROM districts ORDER BY name ASC");
                                     $result1->execute();
+                                    $count = 0;
                                     while ($resultado2 = $result1->fetch()) {
 
                                         $id_dis = $resultado2[0];
                                         $na_dis = $resultado2[1];
-
+                                        if ($name_dis[0] == 0 and $count == 0) {
+                                    ?>
+                                            <option></option>
+                                        <?php
+                                            $count = 1;
+                                        }
                                         if ($na_dis == $name_dis[0]) { ?>
                                             <option value="<?php echo $id_dis; ?>" selected><?php echo $na_dis; ?></option>
                                         <?php } else { ?>
