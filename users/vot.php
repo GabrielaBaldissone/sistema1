@@ -133,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td> <input type="number" class="form-control" min="1000000" max="99999999" placeholder="sin puntos" name="dniv" required> </input> </td>
                             <td> <input type="text" class="form-control" name="addressv"> </input> </td>
                             <td><select class="form-select" name="id_districtsv">
+                                <option></option>
                                     <?php
 
                                     $result = $connec->prepare("SELECT * FROM districts ORDER BY name ASC");
