@@ -10,7 +10,7 @@ include('../db.php');
 $connec = connect();
 $dni = $_POST['dni'];
  
-    $id_person = $connec->prepare('SELECT id FROM persons WHERE dni = :dni');
+    $id_person = $connec->prepare('SELECT * FROM persons WHERE dni = :dni');
     $id_person->execute(array(':dni' => $dni));
     $resultid = $id_person->fetch();
        

@@ -38,10 +38,10 @@ $resultado = $result->fetchAll();
             <div class="container border border-5">
                 <div class="row">
                     <div class="col">
-                        <input type="text" class="form-control m-1" placeholder="Nombres" name="name1"> </input>
+                        <input type="text" class="form-control m-1" placeholder="Nombres" id="name1" name="name1"> </input>
                     </div>
                     <div class="col order-1">
-                        <input type="text" class="form-control m-1" placeholder="Apellidos" name="lastname1"> </input>
+                        <input type="text" class="form-control m-1" placeholder="Apellidos" id="lastname1" name="lastname1"> </input>
                     </div>
                     <div class="col order-2">
                         <input type="number" class="form-control m-1" min="99999" max="99999999" placeholder="DNI sin puntos" id="dni1" name="dni1" required> </input>
@@ -50,10 +50,10 @@ $resultado = $result->fetchAll();
                 </div>
                 <div class="row">
                     <div class="col">
-                        <input type="text" class="form-control m-1" placeholder="Direccion" name="address1" > </input>
+                        <input type="text" class="form-control m-1" placeholder="Direccion" id="address1" name="address1" > </input>
                     </div>
                     <div class="col order-1">
-                        <select  class="form-select m-1" name="id_districts1">
+                        <select  class="form-select m-1" id="id_districts1" name="id_districts1">
                             <option>Barrio</option>
                             <?php
                             foreach ($resultado as $row) {
@@ -64,7 +64,7 @@ $resultado = $result->fetchAll();
                         </select>
                     </div>
                     <div class="col order-2">
-                        <input type="number" class="form-control m-1" placeholder="Telefono" name="phone1"> </input>
+                        <input type="number" class="form-control m-1" placeholder="Telefono" id="phone1" name="phone1"> </input>
                     </div>
                 </div>
                 
@@ -195,22 +195,56 @@ $resultado = $result->fetchAll();
 <script>
     let response = [];
     const boton = document.getElementById("boton");
+    let name1 = document.getElementById("name1");
+    let lastname1 = document.getElementById("lastname1");
+    let address1 = document.getElementById("address1");
+    let id_districts1 = document.getElementById("id_districts1");
+    let phone1 = document.getElementById("phone1");
     $(document).ready(function(){
                          
         $("#dni1").keyup(function(e){
-            let consulta = $("#dni1").val();
+            let dni = $("#dni1").val();
             $("#resultado1").queue(function(n) {                            
                 $("#resultado1").html('<img src="Ajax-loader.gif" />');                  
                     $.ajax({
                         type: "POST",
                         url: "verification.php",
-                        data: "dni="+consulta,
+                        data: "dni="+dni,
                         dataType: "html",
                         error: function(response){
                             $("#resultado1").html("<span style='font-weight:bold;color:red;'>Error</span>");
                         },
                         success: function(data){ 
                             response[0] = data;
+                            if(data === "<span style='font-weight:bold;color:orange;'>DNI existente pero sin planilla</span>"){
+                                (async () => {
+                                    try {
+                                        var datos = { dni: dni };
+                                        var init = {
+                                            method: "POST",
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify(datos)
+                                        };
+                                        var response = await fetch('pruebaFetch.php', init);
+                                        if (response.ok) {
+                                            var respuesta = await response.json();
+                                            name1.value = respuesta.name;
+                                            lastname1.value = respuesta.lastname;
+                                            address1.value = respuesta.address;
+                                            id_districts1.value = respuesta.district.id;
+                                            phone1.value = respuesta.phone;
+                                            console.log(respuesta);
+                                            document.close();
+                                        } else {
+                                            throw new Error(response.statusText);
+                                        }
+                                    } catch (err) {
+                                        console.log("Error al realizar la petición AJAX: " + err.message);
+                                    }
+                                })();
+                            }
                             $("#resultado1").html(data);
                             n();
                         }
