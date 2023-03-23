@@ -56,7 +56,7 @@ if (!isset($_SESSION['usuario'])) {
                         <tr>
                             <td> <input type="text" class="form-control" name="name" value="<?php echo $row['name'] ?>" required> </input> </td>
                             <td> <input type="text" class="form-control" name="lastname" value="<?php echo $row['lastname'] ?>" required> </input> </td>
-                            <td> <input type="number" class="form-control" name="dni" min="1000000" max="99999999" value="<?php if (strlen($row['dni']) > 6) : echo $row['dni'];
+                            <td> <input type="number" class="form-control" name="dni" min="100000" max="99999999" value="<?php if (strlen($row['dni']) > 5) : echo $row['dni'];
                                                                                                                             endif ?>" required> </input> </td>
                             <td> <input type="text" class="form-control" name="address" value="<?php echo $row['address'] ?>"> </input> </td>
                             <td><select class="form-select" name="districts">

@@ -18,9 +18,9 @@ $buscador = $connec->prepare("SELECT *
 FROM persons P
 JOIN person_user U
 ON P.id = U.id_person
-WHERE name LIKE LOWER('%" . $_POST["buscar"] . "%') OR 
+WHERE (dni != 0) AND (name LIKE LOWER('%" . $_POST["buscar"] . "%') OR 
 lastname LIKE LOWER('%" . $_POST["buscar"] . "%') OR
-dni LIKE LOWER('%" . $_POST["buscar"] . "%')");
+dni LIKE LOWER('%" . $_POST["buscar"] . "%'))");
 $buscador->execute();
 $resultado = $buscador->fetchAll();
 ?>

@@ -30,6 +30,11 @@ foreach ($res as $row) {
     $deletepersons[$i]->execute(array(
         ':id_person' => $row['id_person']
     ));
+
+    $rowIDPerson = $row['id_person'];
+    //DELETE relacion person user 
+    $deletePersonUser[$i] = $connec->prepare("DELETE FROM person_user WHERE id_person = '$rowIDPerson'");
+    $deletePersonUser[$i]->execute();
     $i++;
 }
 
