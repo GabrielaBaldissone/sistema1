@@ -55,7 +55,7 @@ require 'nav.php';
                             <td> <?php echo  $i; ?> </td>
                             <td> <?php echo $row['name']  ?> </td>
                             <td> <?php echo $row['lastname'] ?> </td>
-                            <td> <?php if (strlen($row['dni']) >= 7) : echo $row['dni'];
+                            <td> <?php if (strlen($row['dni']) >= 6) : echo $row['dni'];
                                     endif ?> </td>
                             <td> <?php echo $row['address'] ?> </td>
                             <td> <?php

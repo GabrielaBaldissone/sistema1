@@ -219,7 +219,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $votants = $connec->prepare("SELECT * 
                     FROM persons P
                     JOIN person_user U
-                    ON P.id = U.id_person");
+                    ON P.id = U.id_person
+                    WHERE dni != 0");
                     $votants->execute();
                     $resulvotants = $votants->fetchAll();
                     $i = 1;
@@ -230,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td> <?php echo  $i; ?> </td>
                             <td> <?php echo $row['name']  ?> </td>
                             <td> <?php echo $row['lastname'] ?> </td>
-                            <td> <?php if (strlen($row['dni']) > 6) : echo $row['dni'];
+                            <td> <?php if (strlen($row['dni']) > 5) : echo $row['dni'];
                                             endif ?></td>
                             <td> <?php echo $row['address'] ?> </td>
                             <td> <?php
@@ -279,7 +280,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     FROM persons P
                     JOIN person_user U
                     ON P.id = U.id_person
-                    WHERE '$rid[0]' = U.id_user");
+                    WHERE '$rid[0]' = U.id_user AND dni != 0");
                     $votants->execute();
                     $resulvotants = $votants->fetchAll();
                     $i = 1;
@@ -290,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <td> <?php echo  $i; ?> </td>
                             <td> <?php echo $row['name']  ?> </td>
                             <td> <?php echo $row['lastname'] ?> </td>
-                            <td> <?php if (strlen($row['dni']) > 6) : echo $row['dni'];
+                            <td> <?php if (strlen($row['dni']) > 5) : echo $row['dni'];
                                             endif ?></td>
                             <td> <?php echo $row['address'] ?> </td>
                             <td> <?php
