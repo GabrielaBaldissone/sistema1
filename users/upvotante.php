@@ -4,20 +4,20 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: ../index.php');
 }
 
+require('functions.php');
 require('../db.php');
 $connec = connect();
 
-$email = ($_SESSION['usuario']);
-
 //BUSCAMOS EL ID DEL USUARIO QUE INICIO SESIÓN
+$email = ($_SESSION['usuario']);
 $nombre = $connec->prepare("SELECT id FROM users WHERE email = '$email'");
 $nombre->execute();
 $id_user = $nombre->fetch();
 
 if (isset($_POST)) {
 
+    // RECIBIMOS LOS DATOS POR POST
     $id = $_POST['id'];
-
     $name = ucfirst($_POST['name']);
     $lastname = ucfirst($_POST['lastname']);
     $dni = $_POST['dni'];
@@ -26,63 +26,67 @@ if (isset($_POST)) {
     $phone = $_POST['phone'];
     $file = $_POST['file'];
 
-    $comparar = $connec->prepare("SELECT dni FROM persons WHERE id = '$id'");
-    $comparar->execute();
-    $dnicomparar = $comparar->fetch();
+    // BUSCAMOS LA PERSONA POR EL DNI EN LA TABLA PERSONS
+    $compararDNI = $connec->prepare("SELECT dni FROM persons WHERE id = '$id'");
+    $compararDNI->execute();
+    $resultCompararDNI = $compararDNI->fetch();
     $error = "";
     $exito = "";
 
-    if ($dni === $dnicomparar[0]) {
-        $upbarrio = $connec->prepare("UPDATE district_person SET id_district = '$districts' 
-    WHERE id_person = '$id'");
-        $upbarrio->execute();
-        $updatevotante = $connec->prepare("UPDATE persons SET name='$name', lastname='$lastname', address='$address', phone='$phone'
-    WHERE id ='$id'");
-        $updatevotante->execute();
+    // SI EL DIN ES IGUAL
+    if ($dni === $resultCompararDNI[0]) {
+
+        // HACE CAMBIOS EN PERSON Y DISTRICT_PERSON
+        upVotante($connec, $districts, $id, $name, $lastname, $address, $phone, $dni);
+        $exito .= "<li> Cambios guardados correctamente</li>";
+        // SI PLANILLA ES = 0
         if($file == 0){
-            $searchPlanilla = $connec->prepare("SELECT id FROM file_person WHERE id_person = '$id'");
-            $searchPlanilla->execute();
-            $resultSearchPlanilla = $searchPlanilla->fetch();
-            if($resultSearchPlanilla != 0){
+
+            // SI TIENE PLANILLA
+            if(searchPlanilla($connec, $id) != 0){
                 // CREAR VOTANTE
-                $votante = $connec->prepare('INSERT INTO persons (name, lastname, dni, address, phone)
-                VALUES (:name, :lastname, :dni, :address, :phone)');
-                $votante->execute(array(
-                    ':name' => '',
-                    ':lastname' => '',
-                    ':dni' => 0,
-                    ':address' => '',
-                    ':phone' => 0,
-                ));
-
-                // BUSCAMOS EL ID DEL VOTANTE
-                $id_person = $connec->prepare('SELECT MAX(id) AS id FROM persons');
-                $id_person->execute();
-                $resultid = $id_person->fetch();
-
-                // RELACION VOTANTE - BARRIO
-                $barrio = $connec->prepare('INSERT INTO district_person (id_district, id_person) VALUES(:id_district, :id_person)');
-                $barrio->execute(array(
-                    ':id_district' => 0,
-                    ':id_person' => $resultid['id']
-                ));
-
-                // RELACION VOTANTE - USUARIO
-                $person_user = $connec->prepare('INSERT INTO person_user (id_user, id_person) VALUES(:id_user, :id_person)');
-                $person_user->execute(array(
-                    ':id_user' => $id_user['id'],
-                    ':id_person' => $resultid['id']
-                ));
-
-                // RELACION VOTANTE - PLANILLA
-                $idPlanilla = $resultSearchPlanilla['id'];
-                $idVotante = $resultid['id'];
-                $upPlanilla = $connec->prepare("UPDATE file_person SET id_person = $idVotante WHERE id = '$idPlanilla'");
-                $upPlanilla->execute();
+                crearVotante($connec, $id_user['id'], $id);
+                $exito .= "<li> Votante eliminado de la planilla </li>";
             }
+
         } else {
-            // falta
+            // SI TIENE PLANILLA
+            if(searchPlanilla($connec, $id)['id_file'] == $file){
+                $error .= "<li> ES LA MISMA PLANILLA </li>";
+            }else{
+            // SI NO TIENE PLANILLA
+                if(count(cantidadVotante($connec, $file)) == 2){
+                    $error .= "<li> No puede agregar a este votante, planilla llena.</li>";
+                }else{
+                    $searchPlanilla = $connec->prepare("SELECT id_person 
+                        FROM file_person FP
+                        INNER JOIN persons P
+                        ON P.id = FP.id_person
+                        WHERE FP.id_file = '$file' AND P.dni = 0");
+                    $searchPlanilla->execute();
+                    $resultSearchPlanilla = $searchPlanilla->fetch();
+                    $resultSearchPlanilla1 = $resultSearchPlanilla['id_person'];
+                    $upPlanilla = $connec->prepare("UPDATE file_person SET id_person = '$id' WHERE id_person = '$resultSearchPlanilla1' LIMIT 1");
+                    $upPlanilla->execute();
+
+                    $delete = $connec->prepare("DELETE FROM persons WHERE id ='$resultSearchPlanilla1'");
+                    $delete->execute();
+                    $resultado = $delete ->fetch();
+                    
+                    $deleterelacion = $connec -> prepare ("DELETE FROM person_user WHERE id_person = '$resultSearchPlanilla1'");
+                    $deleterelacion -> execute();
+                    $resuldeleterelacion = $deleterelacion -> fetch();
+                    
+                    $deleterelacion2 = $connec -> prepare ("DELETE FROM district_person WHERE id_person = '$resultSearchPlanilla1'");
+                    $deleterelacion2 -> execute();
+                    $resuldeleterelacion2 = $deleterelacion2 -> fetch();
+
+                    $exito .= "<li> Votante agregado a la planilla </li>";
+                }
+            }
+
         }        
+    // SI EL DNI ES DISTINTO
     } else {
         $buscar = $connec->prepare("SELECT dni FROM persons WHERE dni = '$dni'");
         $buscar->execute();
@@ -91,60 +95,57 @@ if (isset($_POST)) {
             $error .= '<li> El DNI ya existe.</li>';
 
         } else {
-            $upbarrio = $connec->prepare("UPDATE district_person SET id_district = '$districts' 
-        WHERE id_person = '$id'");
-            $upbarrio->execute();
-            $updatevotante = $connec->prepare("UPDATE persons SET name='$name', dni='$dni', lastname='$lastname', address='$address', phone='$phone'
-        WHERE id ='$id'");
-            $updatevotante->execute();
-            if($file == 0){
-                $searchPlanilla = $connec->prepare("SELECT id FROM file_person WHERE id_person = '$id'");
-                $searchPlanilla->execute();
-                $resultSearchPlanilla = $searchPlanilla->fetch();
-                if($resultSearchPlanilla != 0){
-                    // CREAR VOTANTE
-                    $votante = $connec->prepare('INSERT INTO persons (name, lastname, dni, address, phone)
-                    VALUES (:name, :lastname, :dni, :address, :phone)');
-                    $votante->execute(array(
-                        ':name' => '',
-                        ':lastname' => '',
-                        ':dni' => 0,
-                        ':address' => '',
-                        ':phone' => 0,
-                    ));
-
-                    // BUSCAMOS EL ID DEL VOTANTE
-                    $id_person = $connec->prepare('SELECT MAX(id) AS id FROM persons');
-                    $id_person->execute();
-                    $resultid = $id_person->fetch();
-
-                    // RELACION VOTANTE - BARRIO
-                    $barrio = $connec->prepare('INSERT INTO district_person (id_district, id_person) VALUES(:id_district, :id_person)');
-                    $barrio->execute(array(
-                        ':id_district' => '0',
-                        ':id_person' => $resultid['id']
-                    ));
-
-                    // RELACION VOTANTE - USUARIO
-                    $person_user = $connec->prepare('INSERT INTO person_user (id_user, id_person) VALUES(:id_user, :id_person)');
-                    $person_user->execute(array(
-                        ':id_user' => $id_user['id'],
-                        ':id_person' => $resultid['id']
-                    ));
-
-                    // RELACION VOTANTE - PLANILLA
-                    $idPlanilla = $resultSearchPlanilla['id'];
-                    $idVotante = $resultid['id'];
-                    $upPlanilla = $connec->prepare("UPDATE file_person SET id_person = $idVotante WHERE id = '$idPlanilla'");
-                    $upPlanilla->execute();
-                }
-            } else {
-                // falta
-            }
-        }
-    }
-    if ($updatevotante == true) {
+                    // HACE CAMBIOS EN PERSON Y DISTRICT_PERSON
+        upVotante($connec, $districts, $id, $name, $lastname, $address, $phone, $dni);
         $exito .= "<li> Cambios guardados correctamente</li>";
+        // SI PLANILLA ES = 0
+        if($file == 0){
+
+            // SI TIENE PLANILLA
+            if(searchPlanilla($connec, $id) != 0){
+                // CREAR VOTANTE
+                crearVotante($connec, $id_user['id'], $id);
+                $exito .= "<li> Votante eliminado de la planilla </li>";
+            }
+
+        } else {
+                // SI TIENE PLANILLA
+                if(searchPlanilla($connec, $id)['id_file'] == $file){
+                    $error .= "<li> ES LA MISMA PLANILLA </li>";
+                }else{
+                // SI NO TIENE PLANILLA
+                    if(count(cantidadVotante($connec, $file)) == 2){
+                        $error .= "<li> No puede agregar a este votante, planilla llena.</li>";
+                    }else{
+                        $searchPlanilla = $connec->prepare("SELECT id_person 
+                            FROM file_person FP
+                            INNER JOIN persons P
+                            ON P.id = FP.id_person
+                            WHERE FP.id_file = '$file' AND P.dni = 0");
+                        $searchPlanilla->execute();
+                        $resultSearchPlanilla = $searchPlanilla->fetch();
+                        $resultSearchPlanilla1 = $resultSearchPlanilla['id_person'];
+                        $upPlanilla = $connec->prepare("UPDATE file_person SET id_person = '$id' WHERE id_person = '$resultSearchPlanilla1' LIMIT 1");
+                        $upPlanilla->execute();
+
+                        $delete = $connec->prepare("DELETE FROM persons WHERE id ='$resultSearchPlanilla1'");
+                        $delete->execute();
+                        $resultado = $delete ->fetch();
+                        
+                        $deleterelacion = $connec -> prepare ("DELETE FROM person_user WHERE id_person = '$resultSearchPlanilla1'");
+                        $deleterelacion -> execute();
+                        $resuldeleterelacion = $deleterelacion -> fetch();
+                        
+                        $deleterelacion2 = $connec -> prepare ("DELETE FROM district_person WHERE id_person = '$resultSearchPlanilla1'");
+                        $deleterelacion2 -> execute();
+                        $resuldeleterelacion2 = $deleterelacion2 -> fetch();
+
+                        $exito .= "<li> Votante agregado a la planilla </li>";
+                    }
+                }
+
+            }      
+        }
     }
 }
 
