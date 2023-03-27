@@ -49,6 +49,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_districts4 = $input['id_districts4'] ? $input['id_districts4'] : "";
     $phone4 = $input['phone4'] ? $input['phone4'] : "";
 
+    $name5 = $input['name5'] ? ucfirst($input['name5']) : "";
+    $lastname5 = $input['lastname5'] ? ucfirst($input['lastname5']) : "";
+    $dni5 = $input['dni5'] ? $input['dni5'] : "";
+    $address5 = $input['address5'] ? $input['address5'] : "";
+    $id_districts5 = $input['id_districts5'] ? $input['id_districts5'] : "";
+    $phone5 = $input['phone5'] ? $input['phone5'] : "";
+
+    $name6 = $input['name6'] ? ucfirst($input['name6']) : "";
+    $lastname6 = $input['lastname6'] ? ucfirst($input['lastname6']) : "";
+    $dni6 = $input['dni6'] ? $input['dni6'] : "";
+    $address6 = $input['address6'] ? $input['address6'] : "";
+    $id_districts6 = $input['id_districts6'] ? $input['id_districts6'] : "";
+    $phone6 = $input['phone6'] ? $input['phone6'] : "";
+
+    $name7 = $input['name7'] ? ucfirst($input['name7']) : "";
+    $lastname7 = $input['lastname7'] ? ucfirst($input['lastname7']) : "";
+    $dni7 = $input['dni7'] ? $input['dni7'] : "";
+    $address7 = $input['address7'] ? $input['address7'] : "";
+    $id_districts7 = $input['id_districts7'] ? $input['id_districts7'] : "";
+    $phone7 = $input['phone7'] ? $input['phone7'] : "";
+
+    $name8 = $input['name8'] ? ucfirst($input['name8']) : "";
+    $lastname8 = $input['lastname8'] ? ucfirst($input['lastname8']) : "";
+    $dni8 = $input['dni8'] ? $input['dni8'] : "";
+    $address8 = $input['address8'] ? $input['address8'] : "";
+    $id_districts8 = $input['id_districts8'] ? $input['id_districts8'] : "";
+    $phone8 = $input['phone8'] ? $input['phone8'] : "";
+
+    $name9 = $input['name9'] ? ucfirst($input['name9']) : "";
+    $lastname9 = $input['lastname9'] ? ucfirst($input['lastname9']) : "";
+    $dni9 = $input['dni9'] ? $input['dni9'] : "";
+    $address9 = $input['address9'] ? $input['address9'] : "";
+    $id_districts9 = $input['id_districts9'] ? $input['id_districts9'] : "";
+    $phone9 = $input['phone9'] ? $input['phone9'] : "";
+
+    $name10 = $input['name10'] ? ucfirst($input['name10']) : "";
+    $lastname10 = $input['lastname10'] ? ucfirst($input['lastname10']) : "";
+    $dni10 = $input['dni10'] ? $input['dni10'] : "";
+    $address10 = $input['address10'] ? $input['address10'] : "";
+    $id_districts10 = $input['id_districts10'] ? $input['id_districts10'] : "";
+    $phone10 = $input['phone10'] ? $input['phone10'] : "";
+
     // NO REPETITIVO
     // CREAR PLANILLA
     $idfile = $connec->prepare('INSERT INTO files (id) 
@@ -72,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resultfile_user = $file_user->fetchAll();
 
     // REPETITIVO
-    for($i = 1; $i < 5; $i++){
+    for($i = 1; $i < 11; $i++){
 
         // BUSCAMOS SI LA PERSONA EXISTE EN LA DB
         $dni = ${'dni' . $i};

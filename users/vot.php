@@ -204,6 +204,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <td style="font-weight:bold;"> Domicilio </td>
                     <td style="font-weight:bold;"> Barrio </td>
                     <td style="font-weight:bold;"> Teléfono </td>
+                    <td style="font-weight:bold;"> Planilla </td>
                     <?php
                     if ($dirigente['role'] == 1 or $dirigente['role'] == 2) {
                     ?>
@@ -245,6 +246,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     echo $name_dis[0];
                                     ?> </td>
                             <td> <?php echo $row['phone'] ?> </td>
+                            <td> <?php
+                                    $result2 = $connec->prepare("SELECT id_file
+                             FROM file_person
+                             WHERE id_person = " . $row['id_person']);
+                                    $result2->execute();
+                                    $planilla = $result2->fetch();
+                                    echo $planilla['id_file'];
+                                    ?> 
+                            </td>
                             <td>
                                 <?php
                                 if ($dirigente['role'] == 1) {
@@ -303,9 +313,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     $result1->execute();
                                     $name_dis = $result1->fetch();
                                     echo $name_dis[0];
-                                    ?> </td>
+                                    ?> 
+                            </td>
                             <td> <?php echo $row['phone'] ?> </td>
-
+                            <td> <?php
+                                    $result2 = $connec->prepare("SELECT id_file
+                             FROM file_person
+                             WHERE id_person = " . $row['id_person']);
+                                    $result2->execute();
+                                    $planilla = $result2->fetch();
+                                    echo $planilla['id_file'];
+                                    ?> 
+                            </td>
                             <td>
                                 <!-- ID de files -->
                                 <div class="button-group">

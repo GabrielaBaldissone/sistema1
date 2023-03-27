@@ -78,7 +78,7 @@ if (!isset($_SESSION['usuario'])) {
                                         $na_dis = $resultado2[1];
                                         if ($name_dis[0] == 0 and $count == 0) {
                                     ?>
-                                            <option></option>
+                                            <option selected>sin barrio</option>
                                         <?php
                                             $count = 1;
                                         }
@@ -93,6 +93,35 @@ if (!isset($_SESSION['usuario'])) {
                                 </select></td>
 
                             <td> <input type="number" class="form-control" name="phone" value="<?php echo $row['phone'] ?>"> </input> </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;"> Planilla 
+                                <select class="form-select" name="file">
+                                    <option>sin planilla</option>
+                                    <?php
+                                        $planilla = $connec->prepare("SELECT *
+                                        FROM file_person
+                                        WHERE id_person = " . $id_person);
+                                        $planilla->execute();
+                                        $resultadoPlanilla = $planilla->fetch();
+                                        if($resultadoPlanilla != 0){
+                                            ?>
+                                                <option value="<?php echo $resultadoPlanilla['id_file']; ?>" selected><?php echo $resultadoPlanilla['id_file']; ?></option>
+                                            <?php
+                                        }
+
+                                        $planillas = $connec->prepare("SELECT * FROM files");
+                                        $planillas->execute();
+                                        while ($resultadoPlanillas = $planillas->fetch()) {
+                                            if($resultadoPlanilla['id_file'] != $resultadoPlanillas['id']){
+                                                ?>
+                                                <option value="<?php echo $resultadoPlanillas['id']; ?>"><?php echo $resultadoPlanillas['id']; ?></option>
+                                                <?php
+                                            }
+                                        }
+                                    ?>
+                                </select>
+                            </td>
                         </tr>
                     <?php
                     }
