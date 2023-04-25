@@ -55,7 +55,7 @@ if (isset($_POST)) {
                 $error .= "<li> ES LA MISMA PLANILLA </li>";
             }else{
             // SI NO TIENE PLANILLA
-                if(count(cantidadVotante($connec, $file)) == 2){
+                if(count(cantidadVotante($connec, $file)) == 10){
                     $error .= "<li> No puede agregar a este votante, planilla llena.</li>";
                 }else{
                     $searchPlanilla = $connec->prepare("SELECT id_person 
@@ -114,7 +114,7 @@ if (isset($_POST)) {
                     $error .= "<li> ES LA MISMA PLANILLA </li>";
                 }else{
                 // SI NO TIENE PLANILLA
-                    if(count(cantidadVotante($connec, $file)) == 2){
+                    if(count(cantidadVotante($connec, $file)) == 10){
                         $error .= "<li> No puede agregar a este votante, planilla llena.</li>";
                     }else{
                         $searchPlanilla = $connec->prepare("SELECT id_person 
